@@ -19,7 +19,7 @@ app.use(cors({
 app.use('/auth', authRouter);
 app.use('/list', listRouter);
 app.use(fileUpload({}));
-
+app.use(express.urlencoded({ extended: false }));
 
 async function startApp() {
     try {
