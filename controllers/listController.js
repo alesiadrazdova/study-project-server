@@ -1,17 +1,17 @@
 
 const Event = require('../models/Event');
 const { validationResult } = require('express-validator');
-const uuid = require('uuid');
-const path = require('path');
+// const uuid = require('uuid');
+// const path = require('path');
+// const moment = require('moment');
 
 class listController {
     async createEvent(req, res) {
-        
-        try {           
-            
-            const errors = validationResult(req);
 
-            
+        try {
+
+           const errors = validationResult(req);
+
 
             if (!errors.isEmpty()) {
                 return res.status(400).json({ message: 'Error creating event', errors });
@@ -22,16 +22,21 @@ class listController {
 
             if (existsEvent) {
                 return res.status(400).json({ message: 'Event with the same name already exists' });
-            }
+            }            
 
-            const file = req.files.picture;
-            const fileName = uuid.v4() + '.jpg';
-            const filePath = path.resolve('static', fileName);
-            file.mv(filePath);
+            
+            // moment().subtract(10, 'days').calendar()
 
-            const event = new Event({ nameevent, description, datestart, dateend, registstart, registend, address, picture: fileName });
+            // const file = req.files.picture;
 
-            // const event = new Event({ nameevent, description, datestart, dateend, registstart, registend, address, picture });
+            // const fileName = uuid.v4() + '.jpg';
+            // const filePath = path.resolve('static', fileName);
+            // file.mv(filePath);
+
+            // const event = new Event({ nameevent, description, datestart, dateend, registstart, registend, address, picture: fileName });
+            // console.log(req.files)
+
+            const event = new Event({ nameevent, description, datestart, dateend, registstart, registend, address });
 
             await event.save();
             return res.status(200).json(event)
@@ -67,7 +72,7 @@ class listController {
             if (!event._id) {
                 res.status(400).json({ message: 'id not specified' });
             }
-            const updateEvent = await Event.findByIdAndUpdate(event._id, event, { new: true} );
+            const updateEvent = await Event.findByIdAndUpdate(event._id, event, { new: true });
             return res.json(updateEvent);
 
         } catch (e) {
@@ -76,7 +81,7 @@ class listController {
     }
     async getDeleteEvent(req, res) {
         try {
-            const {id} = req.params;
+            const { id } = req.params;
             if (!id) {
                 res.status(400).json({ message: 'not specified' });
             };
