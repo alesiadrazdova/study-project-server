@@ -5,7 +5,7 @@ const { secret } = require('../config');
 
         try {
             const token = req.body.token;
-            console.log(token)
+
             if (!token) {
                 return res.status(401).json({ message: 'Unauthorizet: No token provided' });
             } else {
@@ -24,7 +24,6 @@ const { secret } = require('../config');
             console.log(e);
             return res.status(401).json({ message: 'Unauthorizet: No token provided' });
         }
-
 };
 
 module.exports = withAuth;

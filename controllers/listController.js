@@ -9,9 +9,7 @@ class listController {
     async createEvent(req, res) {
 
         try {
-
            const errors = validationResult(req);
-
 
             if (!errors.isEmpty()) {
                 return res.status(400).json({ message: 'Error creating event', errors });
@@ -83,7 +81,7 @@ class listController {
         try {
             const { id } = req.params;
             if (!id) {
-                res.status(400).json({ message: 'not specified' });
+                res.status(400).json({ message: 'id not specified' });
             };
             const event = await Event.findByIdAndDelete(id);
             return res.json(event);
