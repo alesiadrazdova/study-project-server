@@ -3,7 +3,7 @@ const Event = require('../models/Event');
 const { validationResult } = require('express-validator');
 // const uuid = require('uuid');
 // const path = require('path');
-// const moment = require('moment');
+const moment = require('moment');
 
 class listController {
     async createEvent(req, res) {
@@ -16,14 +16,22 @@ class listController {
             }
 
             const { nameevent, description, datestart, dateend, registstart, registend, address } = req.body;
+          
             const existsEvent = await Event.findOne({ nameevent });
 
             if (existsEvent) {
                 return res.status(400).json({ message: 'Event with the same name already exists' });
-            }            
-
+            }           
+        
+            if ((req.body.datestart > req.body.dateend || req.body.registstart > req.body.registend) || (req.body.registstart && req.body.registend > req.body.datestart && req.body.dateend)) {
+                return res.status(400).json({ message: 'Start date cannot be more than end date' });
+            }
             
-            // moment().subtract(10, 'days').calendar()
+            const formatedDatestart = moment(datestart).format('DD.MM.YYYY');
+            const formatedDateend = moment(dateend).format('DD.MM.YYYY');
+            const formatedRegiststart = moment(registstart).format('DD.MM.YYYY');
+            const formatedRegistend = moment(registend).format('DD.MM.YYYY');
+            
 
             // const file = req.files.picture;
 
@@ -34,7 +42,7 @@ class listController {
             // const event = new Event({ nameevent, description, datestart, dateend, registstart, registend, address, picture: fileName });
             // console.log(req.files)
 
-            const event = new Event({ nameevent, description, datestart, dateend, registstart, registend, address });
+            const event = new Event({ nameevent, description, datestart: formatedDatestart, dateend: formatedDateend, registstart: formatedRegiststart, registend: formatedRegistend, address });
 
             await event.save();
             return res.status(200).json(event)
