@@ -42,7 +42,9 @@ class authController {
     }
     async login(req, res) {
         try {
+        
             const { username, password } = req.body;
+            
             const user = await User.findOne({ username });
 
             if (!user) {
@@ -54,6 +56,7 @@ class authController {
                 return res.status(400).json({ message: 'Wrong password entered' });
             }
             const token = generateAccessToken(user._id, user.roles);
+            console.log(user._id)
            
             return res.json({ token });
 
@@ -66,6 +69,36 @@ class authController {
         try {
             const users = await User.find();
             res.json(users);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    async registrEvent(req, res) {
+        try {
+            const eventId = req.body._id;
+            const decoded = jwt.verify(req.body.token, secret, 'jwt');
+            let userID = decoded.id;
+
+            console.log(eventId);
+            const user = await User.findOne({ userID }).populate('userevents');   
+            user.userevents.push(eventId);
+            await user.save();
+
+            res.json(user.userevents);
+
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    async getAllEvents(req, res) {
+        try {
+            
+            const { userevents } = req.body;
+            console.log(userevents)
+            const allUserEvents = await User.find({ userevents });
+            res.json(allUserEvents);
+
         } catch (e) {
             console.log(e);
         }

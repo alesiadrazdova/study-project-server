@@ -23,7 +23,8 @@ class listController {
                 return res.status(400).json({ message: 'Event with the same name already exists' });
             }           
         
-            if ((req.body.datestart > req.body.dateend || req.body.registstart > req.body.registend) || (req.body.registstart && req.body.registend > req.body.datestart && req.body.dateend)) {
+            if ((req.body.datestart > req.body.dateend || req.body.registstart > req.body.registend) || 
+            (req.body.registstart && req.body.registend > req.body.datestart && req.body.dateend)) {
                 return res.status(400).json({ message: 'Start date cannot be more than end date' });
             }
             
