@@ -9,7 +9,7 @@ class usereventsController {
             const decoded = jwt.verify(req.body.token, secret, 'jwt');
             let userID = decoded.id;
 
-            const user = await User.findOne({ userID }).populate('userevents');   
+            let user = await User.findOne({ userID }).populate('userevents');   
             user.userevents.push(eventId);
 
             await user.save();
@@ -21,10 +21,15 @@ class usereventsController {
         }
     }
     async getAllEvents(req, res) {
-        try {            
-            const { userevents } = req.body;
-            const allUserEvents = await User.find({ userevents });
-            res.json(allUserEvents);
+        try {   
+            const decoded = jwt.verify(req.body.token, secret, 'jwt');
+            const userID = decoded.id;
+
+            console.log(userID)
+            const user = await User.findOne({ userID }).populate('userevents');  
+            console.log(user)
+
+            res.json(user.userevents);
 
         } catch (e) {
             console.log(e);

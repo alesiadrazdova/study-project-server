@@ -14,6 +14,6 @@ router.post('/registration', [
 router.post('/login', controller.login);
 router.get('/users', roleMiddleware(['ADMIN']), controller.getUsers);
 router.post('/userevents', withAuth, eventsController.registrEvent);
-router.post('/userevents/all', eventsController.getAllEvents);
+router.post('/alluserevents', withAuth, eventsController.getAllEvents);
 
 module.exports = router;
