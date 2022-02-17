@@ -15,6 +15,6 @@ router.post('/login', controller.login);
 router.get('/users', roleMiddleware(['ADMIN']), controller.getUsers);
 router.post('/userevents', withAuth, eventsController.registrEvent);
 router.post('/alluserevents', withAuth, eventsController.getAllEvents);
-router.delete('/alluserevents/:id', eventsController.deleteUserevent);
+router.delete('/alluserevents/:id', eventsController.deleteUserEvent);
 
 module.exports = router;

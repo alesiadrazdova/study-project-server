@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../config');
-const { db } = require('../models/User');
+
 
 class usereventsController {
     async registrEvent(req, res) {
@@ -11,6 +11,7 @@ class usereventsController {
             let userID = decoded.id;
 
             let user = await User.findById(userID).populate('userevents');
+
             user.userevents.push(eventId);
 
             await user.save();
@@ -35,26 +36,65 @@ class usereventsController {
         }
     }
 
-    async deleteUserevent(req, res) {
+    async deleteUserEvent(req, res) {
 
         try {
             const decoded = jwt.verify(req.headers.token, secret, 'jwt');
-            const userID = decoded.id;
+            const userId = decoded.id;
 
-            let user = await User.findById(userID);
+            const eventId = req.params.id;
+
+            // User.findOneAndUpdate({ _id: userId }, { $pull: { userevents: {_id: eventId }} }, function(eventId) {
+            //     if (!eventId) {
+            //         return res.status(400).json({ message: 'Event not exists' });
+            // }
+            // });
+
+           // User.findOneAndUpdate({ _id: userId }, { $pull: { userevents: {_id: eventId }} }, { returnNewDocument: true })
+           //      .then(updatedDocument => {
+           //          if(updatedDocument) {
+           //              console.log(`Successfully updated document: ${updatedDocument}.`)
+           //          } else {
+           //              console.log("No document matches the provided query.")
+           //          }
+           //
+           //          return res.json(updatedDocument.userevents);
+           //      })
+           //      .catch(err => console.error(`Failed to find and update document: ${err}`))
+
+            User.findOneAndUpdate(
+                { _id: userId },
+                { $pull: { userevents: {$in: [eventId]} } },
+                { new: true }
+            )
+                .then(templates => {
+                    console.log(templates.userevents);
+
+                    return res.json(templates.userevents);
+
+                })
+                .catch(err => console.log(err));
 
 
-            const id = req.params.id;
+            // let userId = await User.findById(userID);
+            // console.log(db.collections.users)
 
-            if (!id) {
-                res.status(400).json({ message: 'id not specified' });
-            };
-            
-            console.log(user.userevents)
+            // console.log(db.events)
 
-            db.users.update({}, {$unset:{"userevents.$": id}});
-            db.users.update({}, {$pull:{"userevents": null}});
-            
+            // if (!eventId) {
+            //     res.status(400).json({ message: 'id not specified' });
+            // };
+
+            // console.log(user.userevents)
+
+            // db.collections.users.updateOne({}, {$unset:{"userevents.$": id}});
+            // db.collections.users.updateOne({}, {$pull:{"userevents": null}});
+
+            // db.users.updateOne({_id : user }, {$pull: {userevents: id}})
+
+            // db.users.update({}, {$unset:{"userevents.$": ObjectId(eventId)}});
+            // db.users.update({}, {$pull:{"userevents": null}});
+
             // db.User.updateOne({
             //     _id: userID
             // }, {
@@ -75,11 +115,7 @@ class usereventsController {
             //     }
             // })
 
-
-
-
-            return res.json(user);
-
+            // return res.json(user);
 
 
         } catch (e) {
